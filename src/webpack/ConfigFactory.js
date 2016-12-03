@@ -576,11 +576,12 @@ function ConfigFactory(target, mode, options = {}, root = CWD) {
     // Define our entry chunks for our bundle.
     entry: removeEmptyKeys({
       main: removeEmpty([
+        ifServer('isomorphic-fetch'),
         ifDevClient("regenerator-runtime/runtime"),
         ifDevClient("react-hot-loader/patch"),
         ifDevClient(`webpack-hot-middleware/client?reload=true&path=http://localhost:${process.env.CLIENT_DEVSERVER_PORT}/__webpack_hmr`),
         options.entry ? options.entry : ifIsFile(`./src/${target}/index.js`),
-        ifServer('isomorphic-fetch')
+
 
       ]),
 
