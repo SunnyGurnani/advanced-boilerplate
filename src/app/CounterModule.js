@@ -2,6 +2,7 @@ export const SET_COUNTER = "counter/SET"
 export const INCREMENT_COUNTER = "counter/INCREMENT"
 export const DECREMENT_COUNTER = "counter/DECREMENT"
 
+
 /**
  * Selector for accessing the counter value from inside the global state
  */
@@ -43,8 +44,11 @@ export function decrementCounter()
 /**
  * This somewhat tries to emulate a asyncronous backend request
  */
-function generateServerResponse() {
+async function generateServerResponse() {
   console.log("Loading counter...")
+  let response = await fetch('https://graph.veg.me/?userid=11&query=query{user{id}}');
+  let data = await response.json();
+  console.log("fetch data = ", data);
   return new Promise((resolve, reject) =>
   {
     setTimeout(() =>

@@ -1,16 +1,17 @@
-import { statSync } from "fs"
+import {
+  statSync
+} from "fs"
 import path from "path"
 import webpack from "webpack"
-
 import AssetsPlugin from "assets-webpack-plugin"
 import builtinModules from "builtin-modules"
 import ExtractTextPlugin from "extract-text-webpack-plugin"
 
 import CodeSplitWebpackPlugin from "code-split-component/webpack"
 import BabiliPlugin from "babili-webpack-plugin"
-// import HardSourceWebpackPlugin from "hard-source-webpack-plugin"
-
-import { BundleAnalyzerPlugin } from "webpack-bundle-analyzer"
+import {
+  BundleAnalyzerPlugin
+} from "webpack-bundle-analyzer"
 
 import dotenv from "dotenv"
 
@@ -28,7 +29,10 @@ import esModules from "./Modules"
 
 import getPostCSSConfig from "./PostCSSConfig"
 
-import { startsWith, includes } from "lodash"
+import {
+  startsWith,
+  includes
+} from "lodash"
 
 
 const builtInSet = new Set(builtinModules)
@@ -39,7 +43,7 @@ const builtInSet = new Set(builtinModules)
 // - "node-pre-gyp" native code module helper
 // - "iltorb" brotli compression wrapper for NodeJS
 // - "node-zopfli" native Zopfli implementation
-const problematicCommonJS = new Set([ "helmet", "express", "encoding", "node-pre-gyp", "iltorb", "node-zopfli" ])
+const problematicCommonJS = new Set(["helmet", "express", "encoding", "node-pre-gyp", "iltorb", "node-zopfli"])
 const CWD = process.cwd()
 
 // @see https://github.com/motdotla/dotenv
@@ -53,10 +57,8 @@ class VerboseProgressPlugin {
     this.cwd = process.cwd()
   }
 
-  apply(compiler)
-  {
-    compiler.plugin("compilation", function(compilation)
-    {
+  apply(compiler) {
+    compiler.plugin("compilation", function(compilation) {
       if (compilation.compiler.isChild())
         return
 
@@ -85,18 +87,14 @@ class VerboseProgressPlugin {
       function moduleDone(module) {
         var ident = module.identifier()
         if (ident) {
-          var entry = activeModules[ident];
+          var entry = activeModules[ident]
           if (entry == null) {
             return
           }
-
-          var runtime = Math.round(now(entry)[1] / 1000000)
           if (includes(ident, "!")) {
             var splits = ident.split("!")
             ident = splits.pop()
           }
-          var relative = ident.slice(slicePathBy)
-          // console.log(`Module ${relative} in ${runtime}ms`)
           if (splits) {
             splits = null
           }
@@ -117,43 +115,43 @@ class VerboseProgressPlugin {
         console.log("- Sealing " + moduleCounter + " modules...")
       })
       compilation.plugin("optimize", log("Optimizing modules/chunks/tree..."))
-      /*
-      compilation.plugin("optimize-modules-basic", log("Basic module optimization"))
-      compilation.plugin("optimize-modules", log("Module optimization"))
-      compilation.plugin("optimize-modules-advanced", log("Advanced module optimization"))
-      compilation.plugin("optimize-chunks-basic", log("Basic chunk optimization"))
-      compilation.plugin("optimize-chunks", log("Chunk optimization"))
-      compilation.plugin("optimize-chunks-advanced", log("Advanced chunk optimization"))
-      compilation.plugin("optimize-tree", function(chunks, modules, callback) {
-        console.log("- Module and chunk tree optimization")
-        callback()
-      })
-      compilation.plugin("revive-modules", log("Module reviving"))
-      compilation.plugin("optimize-module-order", log("Module order optimization"))
-      compilation.plugin("optimize-module-ids", log("Module id optimization"))
-      compilation.plugin("revive-chunks", log("Chunk reviving"))
-      compilation.plugin("optimize-chunk-order", log("Chunk order optimization"))
-      compilation.plugin("optimize-chunk-ids", log("Chunk id optimization"))
-      compilation.plugin("before-hash", log("Hashing"))
-      compilation.plugin("before-module-assets", log("Module assets processing"))
-      compilation.plugin("before-chunk-assets", log("Chunk assets processing"))
-      compilation.plugin("additional-chunk-assets", log("Additional chunk assets processing"))
-      compilation.plugin("record", log("Recording"))
-      compilation.plugin("additional-assets", function(callback) {
-        console.log("- Additional asset processing")
-        callback()
-      })
-      */
+        /*
+        compilation.plugin("optimize-modules-basic", log("Basic module optimization"))
+        compilation.plugin("optimize-modules", log("Module optimization"))
+        compilation.plugin("optimize-modules-advanced", log("Advanced module optimization"))
+        compilation.plugin("optimize-chunks-basic", log("Basic chunk optimization"))
+        compilation.plugin("optimize-chunks", log("Chunk optimization"))
+        compilation.plugin("optimize-chunks-advanced", log("Advanced chunk optimization"))
+        compilation.plugin("optimize-tree", function(chunks, modules, callback) {
+          console.log("- Module and chunk tree optimization")
+          callback()
+        })
+        compilation.plugin("revive-modules", log("Module reviving"))
+        compilation.plugin("optimize-module-order", log("Module order optimization"))
+        compilation.plugin("optimize-module-ids", log("Module id optimization"))
+        compilation.plugin("revive-chunks", log("Chunk reviving"))
+        compilation.plugin("optimize-chunk-order", log("Chunk order optimization"))
+        compilation.plugin("optimize-chunk-ids", log("Chunk id optimization"))
+        compilation.plugin("before-hash", log("Hashing"))
+        compilation.plugin("before-module-assets", log("Module assets processing"))
+        compilation.plugin("before-chunk-assets", log("Chunk assets processing"))
+        compilation.plugin("additional-chunk-assets", log("Additional chunk assets processing"))
+        compilation.plugin("record", log("Recording"))
+        compilation.plugin("additional-assets", function(callback) {
+          console.log("- Additional asset processing")
+          callback()
+        })
+        */
       compilation.plugin("optimize-chunk-assets", function(chunks, callback) {
-        console.log("- Optimizing assets...")
-        callback()
-      })
-      /*
-      compilation.plugin("optimize-assets", function(assets, callback) {
-        console.log("- Optimizing assets...")
-        callback()
-      })
-      */
+          console.log("- Optimizing assets...")
+          callback()
+        })
+        /*
+        compilation.plugin("optimize-assets", function(assets, callback) {
+          console.log("- Optimizing assets...")
+          callback()
+        })
+        */
     })
 
     compiler.plugin("emit", function(compilation, callback) {
@@ -167,11 +165,9 @@ function removeEmpty(array) {
   return array.filter((entry) => Boolean(entry))
 }
 
-function removeEmptyKeys(obj)
-{
+function removeEmptyKeys(obj) {
   var copy = {}
-  for (var key in obj)
-  {
+  for (var key in obj) {
     if (!(obj[key] == null || obj[key].length === 0))
       copy[key] = obj[key]
   }
@@ -183,8 +179,7 @@ function ifElse(condition) {
   return (then, otherwise) => (condition ? then : otherwise)
 }
 
-function merge()
-{
+function merge() {
   const funcArgs = Array.prototype.slice.call(arguments) // eslint-disable-line prefer-rest-params
 
   return Object.assign.apply(
@@ -208,8 +203,12 @@ function ifIsFile(filePath) {
 }
 
 
-function getJsLoader({ isServer, isClient, isProd, isDev })
-{
+function getJsLoader({
+  isServer,
+  isClient,
+  isProd,
+  isDev
+}) {
   const nodeBabel = isServer ? {
     // Don't try to find .babelrc because we want to force this configuration.
     babelrc: false,
@@ -223,8 +222,7 @@ function getJsLoader({ isServer, isClient, isProd, isDev })
     // Nobody needs the original comments when having source maps
     comments: false,
 
-    presets:
-    [
+    presets: [
       // It seems to be a good idea to use the minimum required
       // transpiling infrastructure. But unfortunately it does not
       // seem to work for us.
@@ -242,8 +240,7 @@ function getJsLoader({ isServer, isClient, isProd, isDev })
       "babel-preset-react"
     ],
 
-    plugins:
-    [
+    plugins: [
       // Optimization for lodash imports
       "lodash",
 
@@ -258,9 +255,6 @@ function getJsLoader({ isServer, isClient, isProd, isDev })
 
       // { ...todo, completed: true }
       "transform-object-rest-spread",
-
-      // Polyfills the runtime needed
-      [ "transform-runtime", { regenerator: false }],
 
       // Code Splitting by Routes
       [
@@ -284,55 +278,64 @@ function getJsLoader({ isServer, isClient, isProd, isDev })
 
     // Nobody needs the original comments when having source maps
     comments: false,
+    presets: removeEmpty([
+      // JSX
+      'react',
+      // For our client bundles we transpile all the latest ratified
+      // ES201X code into ES5, safe for browsers.  We exclude module
+      // transilation as webpack takes care of this for us, doing
+      // tree shaking in the process.
+      ['latest', {
+        es2015: {
+          modules: false
+        }
+      }],
+      // For our server bundle we use the awesome babel-preset-env which
+      // acts like babel-preset-latest in that it supports the latest
+      // ratified ES201X syntax, however, it will only transpile what
+      // is necessary for a target environment.  We have configured it
+      // to target our current node version.  This is cool because
+      // recent node versions have extensive support for ES201X syntax.
+      // Also, we have disabled modules transpilation as webpack will
+      // take care of that for us ensuring tree shaking takes place.
+      // NOTE: Make sure you use the same node version for development
+      // and production.
 
-    presets:
-    [
-      // let, const, destructuring, classes, no modules
-      [ "babel-preset-es2015", { modules: false }],
+    ]),
+    plugins: removeEmpty([
 
-      // exponentiation
-      "babel-preset-es2016",
+      // We are adding the experimental "object rest spread" syntax as
+      // it is super useful.  There is a caviat with the plugin that
+      // requires us to include the destructuring plugin too.
+      'transform-object-rest-spread',
+      'transform-es2015-destructuring',
+      // The class properties plugin is really useful for react components.
+      'transform-class-properties',
+      // This decorates our components with  __self prop to JSX elements,
+      // which React will use to generate some runtime warnings.
 
-      // async to generators + trailing function commas
-      "babel-preset-es2017",
-
-      // JSX, Flow
-      "babel-preset-react"
-    ],
-
-    plugins:
-    [
-      // Optimization for lodash imports
-      "lodash",
-
-      // class { handleClick = () => { } }
-      "transform-class-properties",
-
-      // { ...todo, completed: true }
-      "transform-object-rest-spread",
-
-      // Polyfills the runtime needed
-      [ "transform-runtime", { regenerator: false }],
-
-      // Code Splitting by Routes
+      // The following plugin supports the code-split-component
+      // instances, taking care of all the heavy boilerplate that we
+      // would have had to do ourselves to get code splitting w/SSR
+      // support working.
+      // @see https://github.com/ctrlplusb/code-split-component
       [
         "code-split-component/babel", {
           disabled: isDev,
           role: "client"
         }
       ]
-    ]
+    ]),
+
   } : null
 
   return [{
     loader: "babel-loader",
-    options: merge(
-      {
+    options: merge({
         // Enable caching for babel transpiles
         cacheDirectory: true,
 
-        env:
-        {
+        env: {
           production: {
             comments: false,
             plugins: [
@@ -344,7 +347,7 @@ function getJsLoader({ isServer, isClient, isProd, isDev })
             ]
           },
           development: {
-            plugins: [ "react-hot-loader/babel" ]
+            plugins: ["react-hot-loader/babel"]
           }
         }
       },
@@ -356,35 +359,32 @@ function getJsLoader({ isServer, isClient, isProd, isDev })
 }
 
 
-function getCssLoaders({ isServer, isClient, isProd, isDev })
-{
+function getCssLoaders({
+  isServer,
+  isClient,
+  isProd,
+  isDev
+}) {
   // When targetting the server we fake out the style loader as the
   // server can't handle the styles and doesn't care about them either..
-  if (isServer)
-  {
-    return [
-      {
-        loader: "css-loader/locals",
-        query:
-        {
-          sourceMap: false,
-          modules: true,
-          localIdentName: isProd ? "[local]-[hash:base62:8]" : "[path][name]-[local]"
-        }
-      },
-      {
-        loader: "postcss-loader"
+  if (isServer) {
+    return [{
+      loader: "css-loader/locals",
+      query: {
+        sourceMap: false,
+        modules: true,
+        localIdentName: isProd ? "[local]-[hash:base62:8]" : "[path][name]-[local]"
       }
-    ]
+    }, {
+      loader: "postcss-loader"
+    }]
   }
 
-  if (isClient)
-  {
+  if (isClient) {
     // For a production client build we use the ExtractTextPlugin which
     // will extract our CSS into CSS files. The plugin needs to be
     // registered within the plugins section too.
-    if (isProd)
-    {
+    if (isProd) {
       // First: the loader(s) that should be used when the css is not extracted
       // Second: the loader(s) that should be used for converting the resource to a css exporting module
       // Note: Unfortunately it seems like it does not support the new query syntax of webpack v2
@@ -392,49 +392,37 @@ function getCssLoaders({ isServer, isClient, isProd, isDev })
       return ExtractTextPlugin.extract({
         allChunks: true,
         fallbackLoader: "style-loader",
-        loader:
-        [
-          {
-            loader: "css-loader",
-            query:
-            {
-              sourceMap: true,
-              modules: true,
-              localIdentName: "[local]-[hash:base62:8]",
-              minimize: false,
-              import: false
-            }
-          },
-          {
-            loader: "postcss-loader"
-          }
-        ]
-      })
-    }
-    else
-    {
-      // For a development client we will use a straight style & css loader
-      // along with source maps. This combo gives us a better development
-      // experience.
-      return [
-        {
-          loader: "style-loader"
-        },
-        {
+        loader: [{
           loader: "css-loader",
-          query:
-          {
+          query: {
             sourceMap: true,
             modules: true,
-            localIdentName: "[path][name]-[local]",
+            localIdentName: "[local]-[hash:base62:8]",
             minimize: false,
             import: false
           }
-        },
-        {
+        }, {
           loader: "postcss-loader"
+        }]
+      })
+    } else {
+      // For a development client we will use a straight style & css loader
+      // along with source maps. This combo gives us a better development
+      // experience.
+      return [{
+        loader: "style-loader"
+      }, {
+        loader: "css-loader",
+        query: {
+          sourceMap: true,
+          modules: true,
+          localIdentName: "[path][name]-[local]",
+          minimize: false,
+          import: false
         }
-      ]
+      }, {
+        loader: "postcss-loader"
+      }]
     }
   }
 }
@@ -442,22 +430,19 @@ function getCssLoaders({ isServer, isClient, isProd, isDev })
 const isDebug = true
 const isVerbose = true
 
-function ConfigFactory(target, mode, options = {}, root = CWD)
-{
+function ConfigFactory(target, mode, options = {}, root = CWD) {
   // Output custom options
   if (Object.keys(options).length > 0) {
     console.log("Using options: ", options)
   }
 
-  if (!target || !~[ "client", "server" ].findIndex((valid) => target === valid))
-  {
+  if (!target || !~["client", "server"].findIndex((valid) => target === valid)) {
     throw new Error(
       `You must provide a "target" (client|server) to the ConfigFactory.`
     )
   }
 
-  if (!mode || !~[ "development", "production" ].findIndex((valid) => mode === valid))
-  {
+  if (!mode || !~["development", "production"].findIndex((valid) => mode === valid)) {
     throw new Error(
       `You must provide a "mode" (development|production) to the ConfigFactory.`
     )
@@ -552,8 +537,7 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
 
     // Anything listed in externals will not be included in our bundle.
     externals: removeEmpty([
-      ifNode(function(context, request, callback)
-      {
+      ifNode(function(context, request, callback) {
         var basename = request.split("/")[0]
 
         // Externalize built-in modules
@@ -590,19 +574,20 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
     devtool: "source-map",
 
     // Define our entry chunks for our bundle.
-    entry: removeEmptyKeys(
-    {
+    entry: removeEmptyKeys({
       main: removeEmpty([
+        ifDevClient("regenerator-runtime/runtime"),
         ifDevClient("react-hot-loader/patch"),
         ifDevClient(`webpack-hot-middleware/client?reload=true&path=http://localhost:${process.env.CLIENT_DEVSERVER_PORT}/__webpack_hmr`),
         options.entry ? options.entry : ifIsFile(`./src/${target}/index.js`),
+        ifServer('isomorphic-fetch')
+
       ]),
 
       vendor: ifProdClient(options.vendor ? options.vendor : ifIsFile(`./src/${target}/vendor.js`))
     }),
 
-    output:
-    {
+    output: {
       // The dir in which our bundle should be output.
       path: path.resolve(
         root,
@@ -649,32 +634,25 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
       libraryTarget: ifNode("commonjs2", "var")
     },
 
-    resolve:merge(
+    resolve: merge(
 
-      ifProdClient({
-      'alias': {
-      'react': 'preact-compat',
-      'react-dom': 'preact-compat'
-      }
-    })
-  ,
-    {
-      // Enable new module/jsnext:main field for requiring files
-      // Defaults: https://webpack.github.io/docs/configuration.html#resolve-packagemains
-      mainFields: ifNode(
-        [ "module", "jsnext:main", "webpack", "main" ],
-        [ "module", "jsnext:main", "webpack", "browser", "web", "browserify", "main" ]
-      ),
 
-      // These extensions are tried when resolving a file.
-      extensions: [
-        ".js",
-        ".jsx",
-        ".ts",
-        ".tsx",
-        ".json"
-      ]
-    }),
+      {
+        // Enable new module/jsnext:main field for requiring files
+        // Defaults: https://webpack.github.io/docs/configuration.html#resolve-packagemains
+        mainFields: ifNode(
+          ["module", "jsnext:main", "webpack", "main"], ["module", "jsnext:main", "webpack", "browser", "web", "browserify", "main"]
+        ),
+
+        // These extensions are tried when resolving a file.
+        extensions: [
+          ".js",
+          ".jsx",
+          ".ts",
+          ".tsx",
+          ".json"
+        ]
+      }),
 
     plugins: removeEmpty([
       // Improve source caching in Webpack v2
@@ -797,7 +775,9 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
       new webpack.DefinePlugin({
         "process.env.TARGET": JSON.stringify(target),
         "process.env.MODE": JSON.stringify(mode),
-
+        "__SERVER__": isServer,
+        "__CLIENT__": isClient,
+        "__DEV__": isDev,
         // NOTE: The NODE_ENV key is especially important for production
         // builds as React relies on process.env.NODE_ENV for optimizations.
         "process.env.NODE_ENV": JSON.stringify(process.env.NODE_ENV),
@@ -873,53 +853,52 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
       }))
     ]),
 
-    module:
-    {
+    module: {
       rules: removeEmpty(
-      [
-        // JavaScript
-        {
-          test: /\.(js|jsx)$/,
-          loaders: jsLoaders,
-          exclude: excludeFromTranspilation
-        },
+        [
+          // JavaScript
+          {
+            test: /\.(js|jsx)$/,
+            loaders: jsLoaders,
+            exclude: excludeFromTranspilation
+          },
 
-        // Typescript
-        // https://github.com/s-panferov/awesome-typescript-loader
-        {
-          test: /\.(ts|tsx)$/,
-          loader: "awesome-typescript-loader",
-          exclude: excludeFromTranspilation
-        },
+          // Typescript
+          // https://github.com/s-panferov/awesome-typescript-loader
+          {
+            test: /\.(ts|tsx)$/,
+            loader: "awesome-typescript-loader",
+            exclude: excludeFromTranspilation
+          },
 
-        // CSS
-        {
-          test: /\.css$/,
-          loader: cssLoaders
-        },
+          // CSS
+          {
+            test: /\.css$/,
+            loader: cssLoaders
+          },
 
-        // JSON
-        {
-          test: /\.json$/,
-          loader: "json-loader"
-        },
+          // JSON
+          {
+            test: /\.json$/,
+            loader: "json-loader"
+          },
 
-        // YAML
-        {
-          test: /\.(yml|yaml)$/,
-          loaders: [ "json-loader", "yaml-loader" ]
-        },
+          // YAML
+          {
+            test: /\.(yml|yaml)$/,
+            loaders: ["json-loader", "yaml-loader"]
+          },
 
-        // References to images, fonts, movies, music, etc.
-        {
-          test: /\.(eot|woff|woff2|ttf|otf|svg|png|jpg|jpeg|jp2|jpx|jxr|gif|webp|mp4|mp3|ogg|pdf|html)$/,
-          loader: "file-loader",
-          options: {
-            name: ifProdClient("file-[hash:base62:8].[ext]", "[name].[ext]"),
-            emitFile: isClient
+          // References to images, fonts, movies, music, etc.
+          {
+            test: /\.(eot|woff|woff2|ttf|otf|svg|png|jpg|jpeg|jp2|jpx|jxr|gif|webp|mp4|mp3|ogg|pdf|html)$/,
+            loader: "file-loader",
+            options: {
+              name: ifProdClient("file-[hash:base62:8].[ext]", "[name].[ext]"),
+              emitFile: isClient
+            }
           }
-        }      
-      ])
+        ])
     }
   }
 }

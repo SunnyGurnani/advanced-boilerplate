@@ -4,7 +4,7 @@ import React from "react"
 import { Match, Miss, Link } from "react-router"
 import Helmet from "react-helmet"
 import { CodeSplit } from "code-split-component"
-import createLogger from "redux-logger"
+
 
 import "./Fonts.css"
 import Styles from "./App.css"
@@ -99,7 +99,8 @@ App.getReducers = function() {
 App.getMiddlewares = function() {
   var middlewares = []
 
-  if (process.env.TARGET === "client") {
+  if (process.env.TARGET === "client" && process.env.NODE_ENV !== "production") {
+    const createLogger = require("redux-logger")
     middlewares.push(createLogger({ collapsed: true }))
   }
 

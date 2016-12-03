@@ -4,7 +4,7 @@ import { render } from "react-dom"
 import { BrowserRouter } from "react-router"
 import { CodeSplitProvider, rehydrateState } from "code-split-component"
 import { Provider } from "react-redux"
-
+import "./registerServiceWorker"
 import ReactHotLoader from "./ReactHotLoader"
 import App from "../app/App"
 import { createReduxStore } from "../app/Data"

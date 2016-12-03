@@ -4,7 +4,6 @@ import uuid from "uuid"
 import hpp from "hpp"
 import helmet from "helmet"
 import { resolve } from "path"
-
 import {
   ABSOLUTE_CLIENT_OUTPUT_PATH,
   ABSOLUTE_PUBLIC_PATH
@@ -51,7 +50,7 @@ export default function createExpressServer()
   // the added security.
   const cspConfig = {
     directives: {
-      defaultSrc: [ "'self'" ],
+      defaultSrc: [ "'self'", "graph.veg.me" ],
 
       scriptSrc:
       [
