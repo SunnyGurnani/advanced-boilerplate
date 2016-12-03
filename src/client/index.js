@@ -3,11 +3,11 @@ import React from "react"
 import { render } from "react-dom"
 import { BrowserRouter } from "react-router"
 import { CodeSplitProvider, rehydrateState } from "code-split-component"
-import { ApolloProvider } from "react-apollo"
+import { Provider } from "react-redux"
 
 import ReactHotLoader from "./ReactHotLoader"
 import App from "../app/App"
-import { createApolloClient, createReduxStore } from "../app/Data"
+import { createReduxStore } from "../app/Data"
 
 // Get the DOM Element that will host our React application.
 const container = document.querySelector("#app")
@@ -15,9 +15,6 @@ const container = document.querySelector("#app")
 function renderApp(AppComponent)
 {
   console.log("Client: Initialize state from server:", window.APP_STATE)
-  const apolloClient = createApolloClient({
-    initialState: window.APP_STATE
-  })
 
   const reduxStore = createReduxStore({
     reducers: App.getReducers(),
@@ -39,9 +36,9 @@ function renderApp(AppComponent)
       <ReactHotLoader>
         <CodeSplitProvider state={codeSplitState}>
           <BrowserRouter>
-            <ApolloProvider client={apolloClient} store={reduxStore}>
+            <Provider store={reduxStore}>
               <AppComponent/>
-            </ApolloProvider>
+            </Provider>
           </BrowserRouter>
         </CodeSplitProvider>
       </ReactHotLoader>,

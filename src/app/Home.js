@@ -3,9 +3,6 @@ import Helmet from "react-helmet"
 
 import Styles from "./Home.css"
 
-import CurrentUser from "./CurrentUser.gql"
-console.log("Loading GraphQL queries works:", CurrentUser.kind === "Document")
-
 import Config from "./Config.yml"
 console.log("Loading YAML works:", Config.colors.main != null)
 

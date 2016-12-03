@@ -649,7 +649,15 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
       libraryTarget: ifNode("commonjs2", "var")
     },
 
-    resolve:
+    resolve:merge(
+
+      ifProdClient({
+      'alias': {
+      'react': 'preact-compat',
+      'react-dom': 'preact-compat'
+      }
+    })
+  ,
     {
       // Enable new module/jsnext:main field for requiring files
       // Defaults: https://webpack.github.io/docs/configuration.html#resolve-packagemains
@@ -666,7 +674,7 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
         ".tsx",
         ".json"
       ]
-    },
+    }),
 
     plugins: removeEmpty([
       // Improve source caching in Webpack v2
@@ -910,15 +918,7 @@ function ConfigFactory(target, mode, options = {}, root = CWD)
             name: ifProdClient("file-[hash:base62:8].[ext]", "[name].[ext]"),
             emitFile: isClient
           }
-        },
-
-        // GraphQL support
-        // @see http://dev.apollodata.com/react/webpack.html
-        {
-          test: /\.(graphql|gql)$/,
-          exclude: /node_modules/,
-          loader: "graphql-tag/loader"
-        }
+        }      
       ])
     }
   }

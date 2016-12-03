@@ -114,7 +114,7 @@ export default function renderPage({ renderedApp, initialState = {}, nonce, helm
           `CHUNK_MANIFEST=${chunkManifest};` +
           `${STATE_IDENTIFIER}=${JSON.stringify(codeSplitState)};`
         }</script>
-
+        <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=Intl.~locale.en&fetch"></script>
         ${generateScriptTags(assetsForRender.scripts)}
         ${helmet ? helmet.script.toString() : ""}
       </body>

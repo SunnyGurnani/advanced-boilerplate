@@ -1,15 +1,12 @@
 import React from "react"
 import { renderToString } from "react-dom/server"
-import { ServerRouter, createServerRenderContext } from "react-router"
+import { ServerRouter, createServerRenderContext, applyRouterMiddleware } from "react-router"
 import { CodeSplitProvider, createRenderContext } from "code-split-component"
 import Helmet from "react-helmet"
 import { Provider } from "react-redux"
-import { getDataFromTree } from "react-apollo/server"
-import { ApolloProvider } from "react-apollo"
-
 import renderPage from "./renderPage"
-import { createApolloClient, createReduxStore } from "../app/Data"
-
+import { createReduxStore } from "../app/Data"
+import { getDataFromTree } from "react-apollo/server"
 /**
  * Using Apollo logic to recursively resolve all queries needed for
  * initial rendering. The convention is to use the full JSX tree,
@@ -20,9 +17,10 @@ import { createApolloClient, createReduxStore } from "../app/Data"
  * https://www.npmjs.com/package/react-redux-universal-hot-example#server-side-data-fetching
  */
 function renderToStringWithData(component) {
+  console.log("renderToStringWithData");
   return getDataFromTree(component).then(() => {
-    return renderToString(component)
-  })
+   return renderToString(component)
+ });
 }
 
 // SSR is disabled so we will just return an empty html page and will
@@ -44,7 +42,7 @@ function renderLight({ request, response, nonce, initialState }) {
   }
 }
 
-function renderFull({ request, response, nonce, App, apolloClient, reduxStore }) {
+function renderFull({ request, response, nonce, App, reduxStore }) {
   // First create a context for <ServerRouter>, which will allow us to
   // query for the results of the render.
   const routingContext = createServerRenderContext()
@@ -60,9 +58,9 @@ function renderFull({ request, response, nonce, App, apolloClient, reduxStore })
   renderToStringWithData(
     <CodeSplitProvider context={codeSplitContext}>
       <ServerRouter location={request.url} context={routingContext}>
-        <ApolloProvider client={apolloClient} store={reduxStore}>
+        <Provider store={reduxStore}>
           <App />
-        </ApolloProvider>
+        </Provider>
       </ServerRouter>
     </CodeSplitProvider>
   ).then((renderedApp) => {
@@ -140,22 +138,16 @@ export default function createUniversalMiddleware({ App, ssrData, batchRequests 
     }
     else
     {
-      const apolloClient = createApolloClient({
-        headers: request.headers,
-        initialState: initialState,
-        batchRequests: batchRequests,
-        trustNetwork: trustNetwork
-      })
+
 
       const reduxStore = createReduxStore({
-        apolloClient: apolloClient,
         initialState : initialState,
         reducers: App.getReducers(),
         enhancers: App.getEnhancers(),
         middlewares: App.getMiddlewares()
       })
 
-      renderFull({ request, response, nonce, App, apolloClient, reduxStore })
+      renderFull({ request, response, nonce, App, reduxStore })
     }
   }
 }

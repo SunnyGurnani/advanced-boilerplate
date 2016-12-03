@@ -57,6 +57,7 @@ export default function createExpressServer()
       [
         // Allow scripts hosted from our application.
         "'self'",
+        "cdn.polyfill.io",
 
         // Note: We will execution of any inline scripts that have the following
         // nonce identifier attached to them.
